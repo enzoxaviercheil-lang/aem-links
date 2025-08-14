@@ -4,7 +4,11 @@
     "description": "Base Level Extension",
     "version": "1.0",
     "action": {
-      "default_popup": "index.html"
+      "default_popup": "index.html",
+       "default_icon": "assets/icon.png"
+    },
+    "icons": {
+      "128": "assets/icon.png"
     },
     "permissions": ["activeTab"],
     "content_security_policy": {
