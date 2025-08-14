@@ -41,14 +41,37 @@ function normalizePath(pathname) {
   return p;
 }
 
-// Remove prefixos CMS (evita duplicar /content/samsung)
+// Remove prefixos do CMS no INÍCIO do path (editor/assets/sites)
 function stripCmsPrefixes(p) {
-  let out = p
-    .replace(/^\/content\/samsung(?=\/|$)/i, "")
-    .replace(/^\/content\/dam\/samsung(?=\/|$)/i, "");
+  let out = p;
+
+  // editor/assets/sites + /content/samsung...
+  out = out.replace(
+    /^\/(?:editor(?:\.html)?|assets\.html|sites\.html)\/content\/samsung(?=\/|$)/i,
+    ""
+  );
+
+  // editor/assets/sites + /content/dam/samsung...
+  out = out.replace(
+    /^\/(?:editor(?:\.html)?|assets\.html|sites\.html)\/content\/dam\/samsung(?=\/|$)/i,
+    ""
+  );
+
+  // Remove prefixos soltos
+  out = out.replace(/^\/assets\.html(?=\/|$)/i, "");
+  out = out.replace(/^\/sites\.html(?=\/|$)/i, "");
+  out = out.replace(/^\/editor(?:\.html)?(?=\/|$)/i, "");
+
   if (!out) out = "/";
   if (!out.startsWith("/")) out = "/" + out;
+  out = out.replace(/\/{2,}/g, "/");
   return out;
+}
+
+// Adiciona barra final quando necessário
+function withTrailingSlash(p) {
+  if (p === "/") return "/";
+  return p.endsWith("/") ? p : p + "/";
 }
 
 // Extrai sigla do país [/xx...]
@@ -61,8 +84,7 @@ function getCountryFromPath(path) {
 function populateLinksFor(urlStr) {
   $("#current-url").textContent = urlStr || "(sem URL da aba)";
 
-  if (!urlStr || !urlStr.includes("samsung.com")) {
-    // Fora do domínio
+  const resetAll = () => {
     setLink("author", null);
     setLink("preview", null);
     setLink("assets", null);
@@ -71,42 +93,37 @@ function populateLinksFor(urlStr) {
     setLink("live", null);
     setLink("directory", null);
     $("#country-badge").textContent = "";
-    return;
-  }
+  };
+
+  if (!urlStr || !urlStr.includes("samsung.com")) return resetAll();
 
   let urlObj;
-  try { urlObj = new URL(urlStr); } catch {
-    // URL inválida
-    setLink("author", null);
-    setLink("preview", null);
-    setLink("assets", null);
-    setLink("preQa", null);
-    setLink("qa", null);
-    setLink("live", null);
-    setLink("directory", null);
-    $("#country-badge").textContent = "";
-    return;
+  try {
+    urlObj = new URL(urlStr);
+  } catch {
+    return resetAll();
   }
 
-  const pathRaw = normalizePath(urlObj.pathname);      // ex.: "/br" ou "/br/smartphones/galaxy-a36/buy"
-  const cleanPath = stripCmsPrefixes(pathRaw);         // garante que não tem /content/samsung no começo
-  const country = getCountryFromPath(cleanPath);       // "br" | null
+  const pathRaw = normalizePath(urlObj.pathname);
+  const cleanPath = stripCmsPrefixes(pathRaw);
+  const country = getCountryFromPath(cleanPath);
 
-  // Author/Preview usam .html e o mesmo path limpo (se /br → /br.html)
+  // author/preview usam .html
   const authorPreviewPathHtml = `${cleanPath}.html`;
 
-  // LINKS
+  // QA/LIVE com barra final
+  const pathWithSlash = withTrailingSlash(cleanPath);
+
   const author = `https://p6-${REGION}-author.samsung.com/editor.html/content/samsung${authorPreviewPathHtml}`;
   const preview = `https://p6-${REGION}-author.samsung.com/content/samsung${authorPreviewPathHtml}?wcmmode=disabled`;
   const assets = country
     ? `https://p6-${REGION}-author.samsung.com/assets.html/content/dam/samsung/${country}`
     : `https://p6-${REGION}-author.samsung.com/assets.html/content/dam/samsung`;
-  const preQa = `https://p6-pre-qa.samsung.com${cleanPath}`;
-  const qa = `https://p6-qa.samsung.com${cleanPath}`;
-  const live = `https://www.samsung.com${cleanPath}`;
+  const preQa = `https://p6-pre-qa.samsung.com${pathWithSlash}`;
+  const qa = `https://p6-qa.samsung.com${pathWithSlash}`;
+  const live = `https://www.samsung.com${pathWithSlash}`;
   const directory = `https://p6-${REGION}-author.samsung.com/sites.html/content/samsung${cleanPath}`;
 
-  // Preenche
   setLink("author", author);
   setLink("preview", preview);
   setLink("assets", assets);
@@ -115,7 +132,6 @@ function populateLinksFor(urlStr) {
   setLink("live", live);
   setLink("directory", directory);
 
-  // Badge do país
   $("#country-badge").textContent = country ? country.toUpperCase() : "";
 }
 
@@ -137,6 +153,5 @@ try {
     populateLinksFor(urlStr);
   });
 } catch {
-  // Ambiente sem chrome.* (ex: abrir popup.html direto)
   populateLinksFor(location.href);
 }
