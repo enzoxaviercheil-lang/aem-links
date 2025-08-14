@@ -29,52 +29,31 @@ function showToast(msg = "Copiado!") {
   setTimeout(() => el.classList.remove("show"), 1200);
 }
 
-// Normaliza o pathname do site
-function normalizePath(pathname) {
+// Normaliza path removendo lixo do CMS
+function normalizeAndCleanPath(pathname) {
   let p = pathname || "/";
   p = p.split("#")[0].split("?")[0];
+
+  // remove prefixos do AEM
+  p = p.replace(/^\/?(editor(?:\.html)?|assets\.html|sites\.html)\//i, "/");
+  p = p.replace(/^\/?content\/samsung/i, "");
+  p = p.replace(/^\/?content\/dam\/samsung/i, "");
+
+  // remove .html e index.html
   p = p.replace(/\/index\.html$/i, "");
   p = p.replace(/\.html$/i, "");
+
+  // limpa barras duplas
   p = p.replace(/\/{2,}/g, "/");
+
+  // remove barra final se não for só "/"
   if (p.length > 1 && p.endsWith("/")) p = p.slice(0, -1);
+
   if (!p.startsWith("/")) p = "/" + p;
   return p;
 }
 
-// Remove prefixos do CMS no INÍCIO do path (editor/assets/sites)
-function stripCmsPrefixes(p) {
-  let out = p;
-
-  // editor/assets/sites + /content/samsung...
-  out = out.replace(
-    /^\/(?:editor(?:\.html)?|assets\.html|sites\.html)\/content\/samsung(?=\/|$)/i,
-    ""
-  );
-
-  // editor/assets/sites + /content/dam/samsung...
-  out = out.replace(
-    /^\/(?:editor(?:\.html)?|assets\.html|sites\.html)\/content\/dam\/samsung(?=\/|$)/i,
-    ""
-  );
-
-  // Remove prefixos soltos
-  out = out.replace(/^\/assets\.html(?=\/|$)/i, "");
-  out = out.replace(/^\/sites\.html(?=\/|$)/i, "");
-  out = out.replace(/^\/editor(?:\.html)?(?=\/|$)/i, "");
-
-  if (!out) out = "/";
-  if (!out.startsWith("/")) out = "/" + out;
-  out = out.replace(/\/{2,}/g, "/");
-  return out;
-}
-
-// Adiciona barra final quando necessário
-function withTrailingSlash(p) {
-  if (p === "/") return "/";
-  return p.endsWith("/") ? p : p + "/";
-}
-
-// Extrai sigla do país [/xx...]
+// Extrai país
 function getCountryFromPath(path) {
   const m = path.match(/^\/([a-z]{2})(?:\/|$)/i);
   return m ? m[1].toLowerCase() : null;
@@ -84,36 +63,26 @@ function getCountryFromPath(path) {
 function populateLinksFor(urlStr) {
   $("#current-url").textContent = urlStr || "(sem URL da aba)";
 
-  const resetAll = () => {
-    setLink("author", null);
-    setLink("preview", null);
-    setLink("assets", null);
-    setLink("preQa", null);
-    setLink("qa", null);
-    setLink("live", null);
-    setLink("directory", null);
+  if (!urlStr || !urlStr.includes("samsung.com")) {
+    ["author", "preview", "assets", "preQa", "qa", "live", "directory"]
+      .forEach((id) => setLink(id, null));
     $("#country-badge").textContent = "";
-  };
-
-  if (!urlStr || !urlStr.includes("samsung.com")) return resetAll();
+    return;
+  }
 
   let urlObj;
   try {
     urlObj = new URL(urlStr);
   } catch {
-    return resetAll();
+    return;
   }
 
-  const pathRaw = normalizePath(urlObj.pathname);
-  const cleanPath = stripCmsPrefixes(pathRaw);
+  const cleanPath = normalizeAndCleanPath(urlObj.pathname);
   const country = getCountryFromPath(cleanPath);
-
-  // author/preview usam .html
   const authorPreviewPathHtml = `${cleanPath}.html`;
+  const pathWithSlash = cleanPath === "/" ? "/" : `${cleanPath}/`;
 
-  // QA/LIVE com barra final
-  const pathWithSlash = withTrailingSlash(cleanPath);
-
+  // LINKS no padrão original
   const author = `https://p6-${REGION}-author.samsung.com/editor.html/content/samsung${authorPreviewPathHtml}`;
   const preview = `https://p6-${REGION}-author.samsung.com/content/samsung${authorPreviewPathHtml}?wcmmode=disabled`;
   const assets = country
@@ -124,6 +93,7 @@ function populateLinksFor(urlStr) {
   const live = `https://www.samsung.com${pathWithSlash}`;
   const directory = `https://p6-${REGION}-author.samsung.com/sites.html/content/samsung${cleanPath}`;
 
+  // Preenche
   setLink("author", author);
   setLink("preview", preview);
   setLink("assets", assets);
@@ -149,8 +119,7 @@ document.addEventListener("click", (ev) => {
 // Carrega a aba ativa e popula
 try {
   chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
-    const urlStr = tabs?.[0]?.url || "";
-    populateLinksFor(urlStr);
+    populateLinksFor(tabs?.[0]?.url || "");
   });
 } catch {
   populateLinksFor(location.href);
