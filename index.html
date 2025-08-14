@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="color-scheme" content="dark light" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      crossorigin="anonymous"
+    />
+    <title>AEM Link Manager</title>
+    <style>
+      :root {
+        --bg-1: #0f0c29;
+        --bg-2: #302b63;
+        --bg-3: #24243e;
+        --card: #171729;
+        --muted: #9aa4bf;
+        --cyan: #00ffff;
+        --link: #7dd3fc;
+        --link-hover: #bae6fd;
+        --ok: #34d399;
+        --warn: #f59e0b;
+        --err: #ef4444;
+        --ring: rgba(0, 255, 255, 0.25);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        padding: 16px;
+        min-width: 360px;
+        max-width: 480px;
+        background: linear-gradient(
+          135deg,
+          var(--bg-1),
+          var(--bg-2) 60%,
+          var(--bg-3)
+        );
+        color: #e6e8ef;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+      }
+      .wrapper {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.04),
+          rgba(0, 0, 0, 0.06)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35),
+          0 0 0 6px rgba(255, 255, 255, 0.02) inset;
+        backdrop-filter: blur(6px);
+      }
+      .title {
+        font-weight: 800;
+        letter-spacing: 0.4px;
+        text-align: center;
+        line-height: 1.2;
+        margin: 2px 0 18px;
+      }
+      .title .sub {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 600;
+        margin-top: 6px;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        color: #0b1220;
+        background: var(--cyan);
+        border-radius: 999px;
+        padding: 6px 12px;
+        margin: 0 auto 14px;
+        box-shadow: 0 0 0 6px var(--ring);
+      }
+      .grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: 1fr 1fr;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 14px;
+        padding: 14px;
+        transition: transform 0.12s ease, box-shadow 0.12s ease,
+          border-color 0.12s ease;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+        border-color: rgba(255, 255, 255, 0.14);
+      }
+      .card h3 {
+        margin: 0 0 10px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 800;
+      }
+      .btn-linky {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent;
+        border: 0;
+        color: var(--link);
+        text-decoration: none;
+        font-weight: 800;
+        padding: 8px 0;
+        cursor: pointer;
+      }
+      .btn-linky:hover {
+        color: var(--link-hover);
+        text-decoration: underline;
+      }
+      .row-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .copy-btn {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 10px;
+        padding: 6px 10px;
+        color: #e6e8ef;
+        font-weight: 700;
+        font-size: 12px;
+      }
+      .copy-btn:hover {
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      .meta {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 8px;
+        min-height: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .disabled {
+        opacity: 0.55;
+        pointer-events: none;
+      }
+      .footer {
+        margin-top: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .toast {
+        position: fixed;
+        inset: auto 18px 18px auto;
+        background: #0b1220;
+        color: #e6e8ef;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 12px;
+        display: none;
+      }
+      .toast.show {
+        display: block;
+        animation: fade 0.2s ease;
+      }
+      @keyframes fade {
+        from {
+          opacity: 0.5;
+          transform: translateY(4px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="pill">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> AEM Link Manager
+      </div>
+      <h1 class="title">
+        Seus atalhos AEM <span class="sub">Baseado na URL da aba ativa</span>
+      </h1>
+
+      <div class="grid">
+        <div class="card" data-key="author">
+          <h3><i class="fa-solid fa-user-gear"></i> Author</h3>
+          <div class="row-actions">
+            <a id="author" class="btn-linky" target="_blank" rel="noopener"
+              >Abrir página
+              <i class="fa-solid fa-arrow-up-right-from-square"></i
+            ></a>
+            <button class="copy-btn" data-copy="author">
+              <i class="fa-solid fa-copy"></i> Copiar
+            </button>
+          </div>
+          <div class="meta" id="meta-author"></div>
+        </div>
+
+        <div class="card" data-key="preview">
+          <h3><i class="fa-solid fa-magnifying-glass"></i> Preview</h3>
+          <div class="row-actions">
+            <a id="preview" class="btn-linky" target="_blank" rel="noopener"
+              >Abrir página
+              <i class="fa-solid fa-arrow-up-right-from-square"></i
+            ></a>
+            <button class="copy-btn" data-copy="preview">
+              <i class="fa-solid fa-copy"></i> Copiar
+            </button>
+          </div>
+          <div class="meta" id="meta-preview"></div>
+        </div>
+
+        <div class="card" data-key="assets">
+          <h3><i class="fa-solid fa-box-archive"></i> Assets</h3>
+          <div class="row-actions">
+            <a id="assets" class="btn-linky" target="_blank" rel="noopener"
+              >Abrir página
+              <i class="fa-solid fa-arrow-up-right-from-square"></i
+            ></a>
+            <button class="copy-btn" data-copy="assets">
+              <i class="fa-solid fa-copy"></i> Copiar
+            </button>
+          </div>
+          <div class="meta" id="meta-assets"></div>
+        </div>
+
+        <div class="card" data-key="preQa">
+          <h3><i class="fa-solid fa-flask"></i> Pre-QA</h3>
+          <div class="row-actions">
+            <a id="preQa" class="btn-linky" target="_blank" rel="noopener"
+              >Abrir página
+              <i class="fa-solid fa-arrow-up-right-from-square"></i
+            ></a>
+            <button class="copy-btn" data-copy="preQa">
+              <i class="fa-solid fa-copy"></i> Copiar
+            </button>
+          </div>
+          <div class="meta" id="meta-preQa"></div>
+        </div>
+
+        <div class="card" data-key="qa">
+          <h3><i class="fa-solid fa-vial-circle-check"></i> QA</h3>
+          <div class="row-actions">
+            <a id="qa" class="btn-linky" target="_blank" rel="noopener"
+              >Abrir página
+              <i class="fa-solid fa-arrow-up-right-from-square"></i
+            ></a>
+            <button class="copy-btn" data-copy="qa">
+              <i class="fa-solid fa-copy"></i> Copiar
+            </button>
+          </div>
+          <div class="meta" id="meta-qa"></div>
+        </div>
+
+        <div class="card" data-key="live">
+          <h3><i class="fa-solid fa-globe"></i> Live</h3>
+          <div class="row-actions">
+            <a id="live" class="btn-linky" target="_blank" rel="noopener"
+              >Abrir página
+              <i class="fa-solid fa-arrow-up-right-from-square"></i
+            ></a>
+            <button class="copy-btn" data-copy="live">
+              <i class="fa-solid fa-copy"></i> Copiar
+            </button>
+          </div>
+          <div class="meta" id="meta-live"></div>
+        </div>
+
+        <div class="card" data-key="directory">
+          <h3><i class="fa-solid fa-sitemap"></i> Directory</h3>
+          <div class="row-actions">
+            <a id="directory" class="btn-linky" target="_blank" rel="noopener"
+              >Abrir página
+              <i class="fa-solid fa-arrow-up-right-from-square"></i
+            ></a>
+            <button class="copy-btn" data-copy="directory">
+              <i class="fa-solid fa-copy"></i> Copiar
+            </button>
+          </div>
+          <div class="meta" id="meta-directory"></div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <span id="current-url">—</span>
+        <span id="country-badge"></span>
+      </div>
+    </div>
+
+    <div class="toast" id="toast">Copiado!</div>
+    <script src="popup.js"></script>
+  </body>
+</html>
