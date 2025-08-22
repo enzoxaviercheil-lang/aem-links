@@ -65,7 +65,6 @@ function populateLinksFor(urlStr) {
   if (!urlStr || !urlStr.includes("samsung.com")) {
     ["author", "preview", "assets", "preQa", "qa", "live", "directory"]
       .forEach((id) => setLink(id, null));
-    if ($("#btn-gnb")) $("#btn-gnb").setAttribute("href", `https://p6-${DEFAULT_REGION}-author.samsung.com/site_ia_2025.html/samsung/consumer/siteIA2025/br`);
     return;
   }
 
@@ -103,14 +102,6 @@ function populateLinksFor(urlStr) {
   // Atualiza o badge de país
   $("#country-badge").textContent = country.toUpperCase();
 
-  // Atualiza o btnGnb dinamicamente
-  const btnGnb = $("#btn-gnb");
-  if (btnGnb) {
-    btnGnb.setAttribute(
-      "href",
-      `https://p6-${DEFAULT_REGION}-author.samsung.com/site_ia_2025.html/samsung/consumer/siteIA2025/${country}`
-    );
-  }
 }
 
 // Copy handlers
