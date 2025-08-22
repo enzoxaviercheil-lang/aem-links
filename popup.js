@@ -85,9 +85,9 @@ function populateLinksFor(urlStr) {
   // LINKS no padrão original
   const author = `https://p6-${REGION}-author.samsung.com/editor.html/content/samsung${authorPreviewPathHtml}`;
   const preview = `https://p6-${REGION}-author.samsung.com/content/samsung${authorPreviewPathHtml}?wcmmode=disabled`;
-  const assets = country
-    ? `https://p6-${REGION}-author.samsung.com/assets.html/content/dam/samsung/${country}`
-    : `https://p6-${REGION}-author.samsung.com/assets.html/content/dam/samsung`;
+  const assetsPath = cleanPath.replace(/^\/?/, "");
+  const assets = `https://p6-${REGION}-author.samsung.com/assets.html/content/dam/samsung/${assetsPath}`;
+
   const preQa = `https://p6-pre-qa.samsung.com${pathWithSlash}`;
   const qa = `https://p6-qa.samsung.com${pathWithSlash}`;
   const live = `https://www.samsung.com${pathWithSlash}`;
