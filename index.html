@@ -63,6 +63,7 @@
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35),
           0 0 0 6px rgba(255, 255, 255, 0.02) inset;
         backdrop-filter: blur(6px);
+        width: 448px;
       }
       .title {
         font-weight: 800;
@@ -165,10 +166,6 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .disabled {
-        opacity: 0.55;
-        pointer-events: none;
-      }
       .footer {
         margin-top: 16px;
         display: flex;
@@ -202,6 +199,54 @@
           transform: none;
         }
       }
+
+      /* --------- TABS MELHORADAS --------- */
+      .nav-tabs {
+        display: flex;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 6px;
+        margin-bottom: 16px;
+      }
+
+      .nav-item {
+        flex: 1;
+      }
+
+      .nav-item button {
+        width: 100%;
+      }
+
+      .nav-tabs .nav-link {
+        flex: 1;
+        text-align: center;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.04);
+        border: none;
+        border-radius: 8px;
+        padding: 10px 0;
+        transition: all 0.25s ease;
+        cursor: pointer;
+      }
+
+      .nav-tabs .nav-link:hover {
+        color: var(--cyan);
+        background: rgba(0, 255, 255, 0.08);
+      }
+
+      .nav-tabs .nav-link.active {
+        color: #0b1220;
+        background: var(--cyan);
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(0, 255, 255, 0.25);
+      }
+
+      .tab-pane {
+        margin-top: 8px;
+      }
     </style>
   </head>
   <body>
@@ -213,113 +258,309 @@
         Seus atalhos AEM <span class="sub">Baseado na URL da aba ativa</span>
       </h1>
 
-      <div class="grid">
-        <div class="card" data-key="author">
-          <h3><i class="fa-solid fa-user-gear"></i> Author</h3>
-          <div class="row-actions">
-            <a id="author" class="btn-linky" target="_blank" rel="noopener"
-              >Abrir página
-              <i class="fa-solid fa-arrow-up-right-from-square"></i
-            ></a>
-            <button class="copy-btn" data-copy="author">
-              <i class="fa-solid fa-copy"></i> Copiar
-            </button>
+      <ul class="nav nav-tabs" id="tabContent">
+        <li class="nav-item">
+          <button
+            class="nav-link active"
+            data-bs-toggle="tab"
+            data-bs-target="#geral"
+          >
+            P6 Author
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#uteis">
+            Atalhos PIM
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <!-- Aba Geral -->
+        <div class="tab-pane fade show active" id="geral">
+          <div class="grid">
+            <div class="card" data-key="author">
+              <h3><i class="fa-solid fa-user-gear"></i> Author</h3>
+              <div class="row-actions">
+                <a id="author" class="btn-linky" target="_blank" rel="noopener"
+                  >Abrir página
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn" data-copy="author">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+              <div class="meta" id="meta-author"></div>
+            </div>
+
+            <div class="card" data-key="preview">
+              <h3><i class="fa-solid fa-magnifying-glass"></i> Preview</h3>
+              <div class="row-actions">
+                <a id="preview" class="btn-linky" target="_blank" rel="noopener"
+                  >Abrir página
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn" data-copy="preview">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+              <div class="meta" id="meta-preview"></div>
+            </div>
+
+            <div class="card" data-key="assets">
+              <h3><i class="fa-solid fa-box-archive"></i> Assets</h3>
+              <div class="row-actions">
+                <a id="assets" class="btn-linky" target="_blank" rel="noopener"
+                  >Abrir página
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn" data-copy="assets">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+              <div class="meta" id="meta-assets"></div>
+            </div>
+
+            <div class="card" data-key="preQa">
+              <h3><i class="fa-solid fa-flask"></i> Pre-QA</h3>
+              <div class="row-actions">
+                <a id="preQa" class="btn-linky" target="_blank" rel="noopener"
+                  >Abrir página
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn" data-copy="preQa">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+              <div class="meta" id="meta-preQa"></div>
+            </div>
+
+            <div class="card" data-key="qa">
+              <h3><i class="fa-solid fa-vial-circle-check"></i> QA</h3>
+              <div class="row-actions">
+                <a id="qa" class="btn-linky" target="_blank" rel="noopener"
+                  >Abrir página
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn" data-copy="qa">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+              <div class="meta" id="meta-qa"></div>
+            </div>
+
+            <div class="card" data-key="live">
+              <h3><i class="fa-solid fa-globe"></i> Live</h3>
+              <div class="row-actions">
+                <a id="live" class="btn-linky" target="_blank" rel="noopener"
+                  >Abrir página
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn" data-copy="live">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+              <div class="meta" id="meta-live"></div>
+            </div>
+
+            <div class="card" data-key="directory">
+              <h3><i class="fa-solid fa-sitemap"></i> Directory</h3>
+              <div class="row-actions">
+                <a
+                  id="directory"
+                  class="btn-linky"
+                  target="_blank"
+                  rel="noopener"
+                  >Abrir página
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn" data-copy="directory">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+              <div class="meta" id="meta-directory"></div>
+            </div>
           </div>
-          <div class="meta" id="meta-author"></div>
         </div>
 
-        <div class="card" data-key="preview">
-          <h3><i class="fa-solid fa-magnifying-glass"></i> Preview</h3>
-          <div class="row-actions">
-            <a id="preview" class="btn-linky" target="_blank" rel="noopener"
-              >Abrir página
-              <i class="fa-solid fa-arrow-up-right-from-square"></i
-            ></a>
-            <button class="copy-btn" data-copy="preview">
-              <i class="fa-solid fa-copy"></i> Copiar
-            </button>
-          </div>
-          <div class="meta" id="meta-preview"></div>
-        </div>
+        <!-- Aba Links Úteis -->
+        <div class="tab-pane fade" id="uteis">
+          <div class="grid">
+            <div class="card">
+              <h3><i class="fa-solid fa-filter"></i> Filtro</h3>
+              <div class="row-actions">
+                <a
+                  href="https://p6-us-author.samsung.com/aem/pim/b2c/productfunction/filter/page/list"
+                  class="btn-linky"
+                  target="_blank"
+                  >Abrir <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
 
-        <div class="card" data-key="assets">
-          <h3><i class="fa-solid fa-box-archive"></i> Assets</h3>
-          <div class="row-actions">
-            <a id="assets" class="btn-linky" target="_blank" rel="noopener"
-              >Abrir página
-              <i class="fa-solid fa-arrow-up-right-from-square"></i
-            ></a>
-            <button class="copy-btn" data-copy="assets">
-              <i class="fa-solid fa-copy"></i> Copiar
-            </button>
-          </div>
-          <div class="meta" id="meta-assets"></div>
-        </div>
+            <div class="card">
+              <h3><i class="fa-solid fa-network-wired"></i> GNB</h3>
+              <div class="row-actions">
+                <a href="#" id="btn-gnb" class="btn-linky" target="_blank"
+                  >Abrir <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
 
-        <div class="card" data-key="preQa">
-          <h3><i class="fa-solid fa-flask"></i> Pre-QA</h3>
-          <div class="row-actions">
-            <a id="preQa" class="btn-linky" target="_blank" rel="noopener"
-              >Abrir página
-              <i class="fa-solid fa-arrow-up-right-from-square"></i
-            ></a>
-            <button class="copy-btn" data-copy="preQa">
-              <i class="fa-solid fa-copy"></i> Copiar
-            </button>
+            <div class="card">
+              <h3><i class="fa-solid fa-gears"></i> Buy Config</h3>
+              <div class="row-actions">
+                <a
+                  href="https://p6-us-author.samsung.com/aem/pim/b2c/buyingconf/main/page/list"
+                  class="btn-linky"
+                  target="_blank"
+                  >Abrir <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
+            <div class="card">
+              <h3><i class="fa-solid fa-clipboard"></i> Registro</h3>
+              <div class="row-actions">
+                <a
+                  href="https://p6-us-author.samsung.com/aem/pim/b2c/product/onlinetodo/page/list"
+                  class="btn-linky"
+                  target="_blank"
+                  >Abrir <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
+            <div class="card">
+              <h3><i class="fas fa-box-open"></i> Product Detail</h3>
+              <div class="row-actions">
+                <a
+                  href="https://p6-us-author.samsung.com/aem/pim/b2c/product/detail/main/page/list"
+                  class="btn-linky"
+                  target="_blank"
+                  >Abrir <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
+            <div class="card">
+              <h3><i class="fas fa-magnifying-glass-chart"></i> SEO MGMT</h3>
+              <div class="row-actions">
+                <a
+                  href="https://p6-us-author.samsung.com/aem/pim/b2c/pdsetting/seo/page/list"
+                  class="btn-linky"
+                  target="_blank"
+                  >Abrir <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
+            <div class="card">
+              <h3><i class="fas fa-gears"></i> Spec MGMT</h3>
+              <div class="row-actions">
+                <a
+                  href="https://p6-us-author.samsung.com/aem/pim/b2c/newspec/specattributemgmt/page/list"
+                  class="btn-linky"
+                  target="_blank"
+                  >Abrir <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
+            <div class="card">
+              <h3><i class="fas fa-tags"></i> Single Category</h3>
+              <div class="row-actions">
+                <a
+                  href="https://p6-us-author.samsung.com/aem/pim/b2c/productia/singleproductcategorychange/page/familylist"
+                  class="btn-linky"
+                  target="_blank"
+                  >Abrir <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
+            <div class="card">
+              <h3><i class="fas fa-lightbulb"></i> Reasons to Buy</h3>
+              <div class="row-actions">
+                <a
+                  href="https://p6-us-author.samsung.com/aem/pim/b2c/productfunction/reasonstobuy/page/list"
+                  class="btn-linky"
+                  target="_blank"
+                  >Abrir <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
+            <div class="card">
+              <h3><i class="fas fa-star"></i> Local Benefit</h3>
+              <div class="row-actions">
+                <a
+                  href="https://p6-us-author.samsung.com/aem/pim/b2c/productfunction/localbenefit/page/list"
+                  class="btn-linky"
+                  target="_blank"
+                  >Abrir <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
+            <div class="card">
+              <h3><i class="fas fa-search"></i> Best Match</h3>
+              <div class="row-actions">
+                <a
+                  href="https://p6-us-author.samsung.com/aem/pim/global/setting/search/bestmatch/page/list"
+                  class="btn-linky"
+                  target="_blank"
+                  >Abrir <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
+            <div class="card">
+              <h3><i class="fas fa-sliders-h"></i> Product Option</h3>
+              <div class="row-actions">
+                <a
+                  href="https://p6-us-author.samsung.com/aem/pim/b2c/productfunction/option/page/list"
+                  class="btn-linky"
+                  target="_blank"
+                  >Abrir <i class="fa-solid fa-arrow-up-right-from-square"></i
+                ></a>
+                <button class="copy-btn">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="meta" id="meta-preQa"></div>
         </div>
-
-        <div class="card" data-key="qa">
-          <h3><i class="fa-solid fa-vial-circle-check"></i> QA</h3>
-          <div class="row-actions">
-            <a id="qa" class="btn-linky" target="_blank" rel="noopener"
-              >Abrir página
-              <i class="fa-solid fa-arrow-up-right-from-square"></i
-            ></a>
-            <button class="copy-btn" data-copy="qa">
-              <i class="fa-solid fa-copy"></i> Copiar
-            </button>
-          </div>
-          <div class="meta" id="meta-qa"></div>
-        </div>
-
-        <div class="card" data-key="live">
-          <h3><i class="fa-solid fa-globe"></i> Live</h3>
-          <div class="row-actions">
-            <a id="live" class="btn-linky" target="_blank" rel="noopener"
-              >Abrir página
-              <i class="fa-solid fa-arrow-up-right-from-square"></i
-            ></a>
-            <button class="copy-btn" data-copy="live">
-              <i class="fa-solid fa-copy"></i> Copiar
-            </button>
-          </div>
-          <div class="meta" id="meta-live"></div>
-        </div>
-
-        <div class="card" data-key="directory">
-          <h3><i class="fa-solid fa-sitemap"></i> Directory</h3>
-          <div class="row-actions">
-            <a id="directory" class="btn-linky" target="_blank" rel="noopener"
-              >Abrir página
-              <i class="fa-solid fa-arrow-up-right-from-square"></i
-            ></a>
-            <button class="copy-btn" data-copy="directory">
-              <i class="fa-solid fa-copy"></i> Copiar
-            </button>
-          </div>
-          <div class="meta" id="meta-directory"></div>
-        </div>
-      </div>
-
-      <div class="footer">
-        <span id="current-url">—</span>
-        <span id="country-badge"></span>
       </div>
     </div>
 
     <div class="toast" id="toast">Copiado!</div>
+
+    <script src="/libs/bootstrap.min.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

@@ -1,5 +1,5 @@
-// Região fixa "us"
-const REGION = "us";
+// Região fixa fallback
+const DEFAULT_REGION = "us";
 
 // Helpers DOM
 const $ = (sel) => document.querySelector(sel);
@@ -53,20 +53,19 @@ function normalizeAndCleanPath(pathname) {
   return p;
 }
 
-// Extrai país
+// Extrai país do pathname (ex: /br/...)
 function getCountryFromPath(path) {
   const m = path.match(/^\/([a-z]{2})(?:\/|$)/i);
   return m ? m[1].toLowerCase() : null;
 }
 
-// Monta e popula tudo
+// Popula todos os links e country badge
 function populateLinksFor(urlStr) {
-  $("#current-url").textContent = urlStr || "(sem URL da aba)";
 
   if (!urlStr || !urlStr.includes("samsung.com")) {
     ["author", "preview", "assets", "preQa", "qa", "live", "directory"]
       .forEach((id) => setLink(id, null));
-    $("#country-badge").textContent = "";
+    if ($("#btn-gnb")) $("#btn-gnb").setAttribute("href", `https://p6-${DEFAULT_REGION}-author.samsung.com/site_ia_2025.html/samsung/consumer/siteIA2025/br`);
     return;
   }
 
@@ -78,22 +77,21 @@ function populateLinksFor(urlStr) {
   }
 
   const cleanPath = normalizeAndCleanPath(urlObj.pathname);
-  const country = getCountryFromPath(cleanPath);
+  const country = getCountryFromPath(cleanPath) || DEFAULT_REGION;
   const authorPreviewPathHtml = `${cleanPath}.html`;
   const pathWithSlash = cleanPath === "/" ? "/" : `${cleanPath}/`;
 
   // LINKS no padrão original
-  const author = `https://p6-${REGION}-author.samsung.com/editor.html/content/samsung${authorPreviewPathHtml}`;
-  const preview = `https://p6-${REGION}-author.samsung.com/content/samsung${authorPreviewPathHtml}?wcmmode=disabled`;
+  const author = `https://p6-${DEFAULT_REGION}-author.samsung.com/editor.html/content/samsung${authorPreviewPathHtml}`;
+  const preview = `https://p6-${DEFAULT_REGION}-author.samsung.com/content/samsung${authorPreviewPathHtml}?wcmmode=disabled`;
   const assetsPath = cleanPath.replace(/^\/?/, "");
-  const assets = `https://p6-${REGION}-author.samsung.com/assets.html/content/dam/samsung/${assetsPath}`;
-
+  const assets = `https://p6-${DEFAULT_REGION}-author.samsung.com/assets.html/content/dam/samsung/${assetsPath}`;
   const preQa = `https://p6-pre-qa.samsung.com${pathWithSlash}`;
   const qa = `https://p6-qa.samsung.com${pathWithSlash}`;
   const live = `https://www.samsung.com${pathWithSlash}`;
-  const directory = `https://p6-${REGION}-author.samsung.com/sites.html/content/samsung${cleanPath}`;
+  const directory = `https://p6-${DEFAULT_REGION}-author.samsung.com/sites.html/content/samsung${cleanPath}`;
 
-  // Preenche
+  // Preenche os links
   setLink("author", author);
   setLink("preview", preview);
   setLink("assets", assets);
@@ -102,7 +100,17 @@ function populateLinksFor(urlStr) {
   setLink("live", live);
   setLink("directory", directory);
 
-  $("#country-badge").textContent = country ? country.toUpperCase() : "";
+  // Atualiza o badge de país
+  $("#country-badge").textContent = country.toUpperCase();
+
+  // Atualiza o btnGnb dinamicamente
+  const btnGnb = $("#btn-gnb");
+  if (btnGnb) {
+    btnGnb.setAttribute(
+      "href",
+      `https://p6-${DEFAULT_REGION}-author.samsung.com/site_ia_2025.html/samsung/consumer/siteIA2025/${country}`
+    );
+  }
 }
 
 // Copy handlers
